@@ -11,7 +11,7 @@ public class Course0719 {
  	}
 	
 	public static void bubbleSort1(int[] a) {
-	//冒泡排序1
+	//冒泡排序1(从前往后冒泡，每次将最大的放到乱序部分的最后面)
 		for(int i = 0;i < a.length;i++){
 			boolean sorted = true;
 			for(int j = 0;j < a.length - i - 1;j++){
@@ -27,7 +27,7 @@ public class Course0719 {
 	}
 	
 	public static void bubbleSort2(int[] a){
-	//冒泡排序2	
+	//冒泡排序2(从后往前冒泡，每次将最小的放到乱序部分的最前面)	
 		for(int x = 0;x < a.length;x++){
 			boolean sorted = true;
 			for(int y = a.length - 1;y > x;y--){
@@ -89,7 +89,7 @@ public class Course0719 {
 	}
 	
 	public static int[] partition1(int[] nums){
-	//调整顺序使得偶数在前，奇数在后
+	//调整顺序使得偶数在前，奇数在后（定义两个索引变量begin和end，从两边向中间靠拢）
 		int begin = 0;
 		int end = nums.length - 1;
 		while(begin < end){
@@ -106,7 +106,7 @@ public class Course0719 {
 	}
 	
 	public static int[] partition2(int[] nums){
-	//调整顺序使得偶数在前，奇数在后
+	//调整顺序使得偶数在前，奇数在后(定义两个索引变量，同时从左边界开始，用end遍历)
 		int begin = 0;
 		int end = 0;
 		//for循环亦可
