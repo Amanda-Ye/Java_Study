@@ -44,7 +44,7 @@ public class MyArrayList{
 	//中间插入
 	public void insert(int index,int element){
 		if(index < 0 || index > size){
-			System.err.println("下标错误");
+			System.err.println("下标错误哦");
 			return ;
 		}
 		ensureCapacity();
@@ -146,6 +146,5 @@ public class MyArrayList{
 		list.popBack();	// 报错		
 	}
 }
-
 
 	
