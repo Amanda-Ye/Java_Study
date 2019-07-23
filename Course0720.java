@@ -25,10 +25,11 @@ class Person {
 	   3）多少天之前的年月日*/
 class Date {
 	//定义属性
-	public int year = 0;
-	public int month = 0;
-	public int day = 0;
-	public int[] day_of_month = {31,28,31,30,31,30,31,31,30,31,30,31}; 
+	private int year = 0;
+	private int month = 0;
+	private int day = 0;
+	//final 不可变
+	private static final int[] DAYS_OF_MONTH = {31,28,31,30,31,30,31,31,30,31,30,31}; 
 	
 	//定义构造方法
 	//年：1840-2020
@@ -40,11 +41,11 @@ class Date {
 			System.err.println("年的支持范围是[1840,2020]");
 			return ;
 		}
-		if(month < 1 || month > calDayOfMonth(year,month)){
+		if(month < 1 || month > 12){
 			System.out.println("不是地球人的月份呢");
 			return ;
 		}
-		if(day < 1 || day > calDayOfMonth(year,month)){
+		if(day < 1 || day > calDaysOfMonth(year,month)){
 			System.err.println("天数不正确");
 			return ;
 		}
@@ -55,9 +56,9 @@ class Date {
 	
 	//定义方法
 	//确定某年某月的天数
-	public int calDayOfMonth(int year,int month){
+	private static int calDaysOfMonth(int year,int month){
 		if(month != 2){
-			return day_of_month[month - 1];
+			return DAYS_OF_MONTH[month - 1];
 		}
 		if(isLeapYear(year)){
 			return 29;
@@ -67,7 +68,7 @@ class Date {
 		}
 	}
 	//判断是否是闰年
-	public boolean isLeapYear(int year){
+	private static boolean isLeapYear(int year){
 		if(year % 4 == 0 && year % 100 != 0){
 			return true;
 		}
@@ -78,29 +79,31 @@ class Date {
 	}
 	//多少天之后的 (年-月-日) 信息
 	public Date after(int days){
-		day += days;
-		while(day > calDayOfMonth(year,month)){
-			day -= calDayOfMonth(year,month);
-			month += 1;
-			if(month > 12){
-				month = 1;
-				year += 1;
+		Date other = new Date(year,month,day); //保证原来的对象属性值不变
+		other.day += days;
+		while(other.day > calDaysOfMonth(other.year,other.month)){
+			other.day -= calDaysOfMonth(other.year,other.month);
+			other.month += 1;
+			if(other.month > 12){
+				other.month = 1;
+				other.year += 1;
 			}
 		}
-		return this;
+		return other;
 	}
 	//多少天之前的 (年-月-日) 信息
 	public Date before(int days){
-		day -= days;
-		while(day < 1){
-			month -= 1;
-			if(month < 1){
-				month = 12;
-				year -= 1;
+		Date other = new Date(year,month,day); //保证原来的对象属性值不变
+		other.day -= days;
+		while(other.day < 1){
+			other.month -= 1;
+			if(other.month < 1){
+				other.month = 12;
+				other.year -= 1;
 			}
-			day += calDayOfMonth(year,month);
+			other.day += calDaysOfMonth(other.year,other.month);
 		}
-		return this;
+		return other;
 	}
 	//打印年月日信息
 	public String toString(){
@@ -111,9 +114,9 @@ class Date {
 //定义一个类Time:存储 时(hh)：分(mm)：秒(ss) 信息，功能类上
 class Time{
 	//定义属性
-	public int hour;
-	public int minute;
-	public int second;
+	private int hour;
+	private int minute;
+	private int second;
 	
 	//定义构造方法
 	//时：[0,24)   分：[0,60)   秒：[0,60)
