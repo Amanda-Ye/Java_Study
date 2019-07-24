@@ -92,13 +92,47 @@ public class MyArrayList{
 		a[--size] = 0;
 	}
 	
+	//删除指定元素，如果多次出现，全部删除
+	public void deleteAll(int value){
+		//时间复杂度：O(n^2)  空间复杂度：O(1)
+		int index; 
+		while((index = indexOf(value)) != -1){
+			delete(index);
+		}
+		
+		/*
+		//时间复杂度：O(n)   空间复杂度：O(n)
+		int[] newA = new int[a.length];
+		int j = 0;
+		for(int i = 0;i < size;i++){
+			if(a[i] != value){
+				newA[j++] = a[i];
+			}
+		}
+		a = newA;
+		size = j;
+		*/
+		
+		//时间复杂度：O(n)  空间复杂度：O(1)
+		int j = 0;
+		for(int i = 0;i < size;i++){
+			if(a[i] != value){
+				a[j++] = a[i];
+			}
+		}
+		size = j;
+	}
+	
 	//修改指定下标元素
 	public void modify(int index,int value){
+		if(index < 0 || index >= size){
+			System.err.println("下标错误哦");
+		}
 		a[index] = value; //可通过下标直接访问到目标位置
 	}
 	
-	//查找
-	public int search(int value){
+	//查找(返回value在顺序表中的下标，如果出现多次，返回第一次出现的下标)
+	public int indexOf(int value){
 		if(size <= 0){
 			System.err.println("顺序表为空");
 			return -1;
@@ -114,7 +148,10 @@ public class MyArrayList{
 	//打印顺序表
 	public void print(){
 		System.out.println("打印顺序表：当前容量：" + a.length);
-		System.out.println(Arrays.toString(a));
+		//System.out.println(Arrays.toString(a));
+		for(int i = 0;i < size;i++){
+			System.out.print(a[i] + " ");
+		}
 		System.out.println();
 	}
 	
@@ -124,25 +161,31 @@ public class MyArrayList{
 		list.pushBack(1);
 		list.pushBack(2);
 		list.pushBack(3);
-		list.print();	// 1 2 3 0(默认初始值)
+		list.print();	// 1 2 3 (默认初始值)
 		list.pushFront(10);
 		list.pushFront(20);
 		list.pushFront(30);
-		list.print();	// 30 20 10 1 2 3 0 0
+		list.pushFront(20);
+		list.pushFront(10);
+		list.pushFront(20);
+		list.pushFront(20);
+		list.print();	// 20 20 10 20 30 20 10 1 2 3 
 		list.insert(3,100);
-		list.print();	// 30 20 10 100 1 2 3 0
+		list.print();	// 20 20 10 100 20 30 20 10 1 2 3
 		list.insert(20, 200);	// 报错
 		
 		list.delete(2);
 		list.delete(2);
-		list.print();	// 30 20 1 2 3 0 0 0
+		list.print();	// 20 20 20 30 20 10 1 2 3 
+		list.deleteAll(20);
+		list.print();  // 30 10 1 2 3
 		list.popFront();
 		list.popFront();
 		list.popFront();
-		list.print();	// 2 3 0 0 0 0 0 0
+		list.print();	// 2 3 
 		list.popBack();
 		list.popBack();
-		list.print();	// 空的   0 0 0 0 0 0 0 0
+		list.print();	// 空的   
 		list.popBack();	// 报错		
 	}
 }
