@@ -6,7 +6,7 @@ class Node{
 	int val;    //data
 	Node next = null;    //下一个结点的引用，若next == null 表示是最后一个结点
 	
-	//构造方法中
+	//构造方法
 	public Node(int val){
 		this.val = val;
 	}
@@ -79,6 +79,29 @@ public class MyLinkedList{
 		return head;
 	}
 	
+	//删除全部指定元素
+	public static Node removeElement(Node head,int val){
+		Node result = null;  //定义一个新链表，遍历原来的链表遇到结点数据不是val的尾插到新链表中
+		Node last = null;  //指向新链表的尾部结点
+		Node cur = head;
+		while(cur != null){
+			if(cur.val == val){
+				cur = cur.next;
+				continue;
+			}
+			Node next = cur.next;
+			cur.next = null; //将要插入的结点变为尾部结点，即其 next 指向 null
+			if(result == null){
+				result = cur;
+			}else{
+				last.next = cur;
+			}
+			last = cur;
+			cur = next;
+		}
+		return result;
+	}
+	
 	//反转链表
 	private static Node reverseList(Node head){
 		Node result = null;  //定义一个新的空链表
@@ -102,21 +125,35 @@ public class MyLinkedList{
 		// 也就没有第一个结点
 		// head == null 表示第一个结点不存在
 		// 也就是整个链表为空
+		head = pushFront(head, 2);
 		head = pushFront(head, 0);
+		head = pushFront(head, 1);
+		head = pushFront(head, 2);
 		head = pushFront(head, 1);
 		head = pushFront(head, 2);
 		
 		// 打印
-		print(head);	// 2 1 0
+		print(head);	// 2 1 2 1 0 2
 		
-		// 尾插
+		//删除全部指定元素
+		head = removeElement(head,2);
+		print(head);  //1 1 0
+		
+		// 头删
 		head = popFront(head);
 		print(head);	// 1 0
 		
+		//尾插
 		head = pushBack(head, 10);
 		head = pushBack(head, 20);
 		head = pushBack(head, 30);
 		print(head);	// 1 0 10 20 30
+		
+		//反转链表
+		head = reverseList(head);
+		print(head); //30 20 10 0 1
+		
+		//尾删
 		head = popBack(head);
 		head = popBack(head);
 		head = popBack(head);
@@ -130,3 +167,16 @@ public class MyLinkedList{
 		print(head);		// 100
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
