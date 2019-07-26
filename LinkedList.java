@@ -53,19 +53,111 @@ public class LinkedList {
         }
     }
 
-    //删除所有指定元素（方法1）
+    //头删
+    private static Node popFront(Node head){
+        if(head == null){
+            System.err.println("链表为空无法删除"); //标准错误输出
+            return null;
+        }
+        return head.next;  //原来的第一个结点会因为没有引用指向而被回收
+    }
+
+    //尾删（需要找到倒数第二个结点，因此要单独处理链表为空和只有一个结点的情况）
+    private static Node popBack(Node head){
+        if(head == null){
+            System.err.println("链表为空无法删除"); //标准错误输出
+            return null;
+        }
+        if(head.next == null){
+            return null;
+        }
+        Node cur = head;
+        while(cur.next.next != null){
+            cur = cur.next;
+        }
+        cur.next = null; //尾部的结点会因为没有引用指向而被回收
+        return head;
+    }
+
+    //删除所有指定元素（方法1——定义新链表，对需要的结点进行尾插）
     private static Node removeElement1(Node head,int val){
-
+        Node result = null;  //新链表
+        Node last = result;  //新链表的尾部结点引用
+        Node cur = head;
+        while(cur != null){
+            if(cur.val == val){
+                cur = cur.next;
+                continue; //若结点值与所给值相等，则直接遍历下一个结点
+            }
+            //若结点值与所给值不相等，则将结点变为尾部结点在新链表中进行尾插
+            Node next = cur.next;
+            cur.next = null;  //尾部结点的 next 指向 null
+            if(result == null){
+                result = cur;
+            }else{
+                last.next = cur;
+            }
+            last = cur;
+            cur = next;
+        }
+        return result;
     }
 
-    //删除所有指定元素（方法2）
+    //删除所有指定元素（方法2——在原来的链表中遍历删除，对第一个结点单独处理，因为它没有前驱结点）
     private static Node removeElement2(Node head,int val){
-
+        if(head == null){
+            return null;
+        }
+        Node prev = head;  //cur的前驱结点
+        Node cur = head.next;
+        while(cur != null){
+            if(cur.val == val){
+                prev.next = cur.next;
+            }else{
+                prev = cur;
+            }
+            cur = cur.next;
+        }
+        if(head.val == val){
+            head = head.next;
+        }
+        return head;
     }
 
-    //删除所有指定元素（方法3）
+    //删除所有指定元素（方法3——在方法2的基础上优化，原理一样）
     private static Node removeElement3(Node head,int val){
+        Node prev = null;
+        Node cur = head;
+        while(cur != null){
+            if(cur.val == val){
+                if(cur == head){
+                    head = cur.next;
+                }else{
+                    prev.next = cur.next;
+                }
+            }else{
+                prev = cur;
+            }
+            cur = cur.next;
+        }
+        return head;
+    }
 
+    //删除所有指定元素（方法4——给原来链表中的第一个结点加一个前驱结点，便可统一处理所有结点）
+    private static Node removeElement4(Node head,int val){
+        Node tmpHead = new Node(-1);
+        tmpHead.next = head;
+        Node prev = tmpHead;
+        Node cur = head;
+        while(cur != null){
+            if(cur.val == val){
+                prev.next = cur.next;
+            }else{
+                prev = cur;
+            }
+            cur = cur.next;
+        }
+        return tmpHead.next;
     }
 
     //合并两个有序链表（方法1--非递归）
@@ -74,9 +166,8 @@ public class LinkedList {
         Node last = result;   //指向新链表的尾部结点
         Node cur1 = l1;  //遍历链表l1
         Node cur2 = l2;  //遍历链表l2
-        while (cur1 != null && cur2 != null) {
+        while (cur1 != null && cur2 != null) {  // && 条件
             if (cur1.val <= cur2.val) {
-                Node next = cur1.next;
                 //尾插cur1
                 if(result == null){
                     result = cur1;
@@ -86,7 +177,6 @@ public class LinkedList {
                 last = cur1;  //last指向尾结点
                 cur1 = cur1.next;
             }else{
-                Node next = cur2.next;
                 //尾插cur2
                 if(result == null){
                     result = cur2;
@@ -94,7 +184,7 @@ public class LinkedList {
                     last.next = cur2;
                 }
                 last = cur2;  //last指向尾结点
-                cur2 = next;
+                cur2 = cur2.next;
             }
          //若链表l2已遍历完，将链表l1中剩下的链到last后面
          if(cur1 != null){
@@ -131,7 +221,7 @@ public class LinkedList {
         Node last = result;
         Node cur1 = l1;
         Node cur2 = l2;
-        while (cur1 != null || cur2 != null) {
+        while (cur1 != null || cur2 != null) {  // || 条件
             if (cur1 == null) {
                 return cur2;
             }
@@ -143,7 +233,7 @@ public class LinkedList {
                     result = cur1;
                 } else {
                     Node next = cur1.next;
-                    //cur1.next = null;
+                    cur1.next = null;  //把当前结点变为尾部结点尾插到新链表中
                     last.next = cur1;
                     last = cur1;
                     cur1 = next;
@@ -153,7 +243,7 @@ public class LinkedList {
                     result = cur2;
                 } else {
                     Node next = cur2.next;
-                    //cur2.next = null;
+                    cur2.next = null;  //把当前结点变为尾部结点尾插到新链表中
                     last.next = cur2;
                     last = cur2;
                     cur2 = next;
@@ -163,7 +253,171 @@ public class LinkedList {
         return result;
     }
 
+    //以给定值x为基准将链表分成两部分，小于x的值在大于或等于x的值前面（方法1——定义两个新链表）
+    private static Node partition(Node head,int x){
+        Node small = null;
+        Node last1 = small;
+        Node big = null;
+        Node last2 = big;
+        Node cur = head;
+        while(cur != null){
+            if(cur.val < x ){
+                if(small == null){
+                    small = cur;
+                }else{
+                    last1.next = cur;
+                }
+                last1 = cur;
+                cur = cur.next;
+            }else{
+                if(big == null){
+                    big = cur;
+                }else{
+                    last2.next = cur;
+                }
+                last2 = cur;
+                cur = cur.next;
+            }
+        }
+        // small 和 big 可能有一个链表为空
+        if(small == null){
+            return big;
+        }else{
+            last1.next = big;
+            if(big != null){
+                last2.next = null;  //最后一个结点的 next 必须指向 null
+            }
+        }
+        return small;
+    }
+
+    //计算链表中的结点个数（即链表长度）
+    private static int getLength(Node head){
+        int len = 0;
+        for(Node cur = head;cur != null;cur = cur.next){
+            len++;
+        }
+        return len;
+    }
+
+    //返回链表的中间结点（若为偶数个结点，返回中间的两个中的右边结点）
+    //方法1（得到链表长度，遍历走一半即可）
+    private static Node middleNode1(Node head){
+        int len = getLength(head);
+        Node node = head;
+        for(int i = 0;i < len / 2;i++){
+            node = node.next;
+        }
+        return node;
+    }
+    //方法2（定义两个引用，fast 走的比 slow 快，当 fast==null 时，slow刚好为中间结点）
+    private static Node middleNode2(Node head){
+        Node slow = head;
+        Node fast = head;
+        while(fast != null){
+            fast = fast.next;
+            if(fast == null){  //结束条件是 fast==null ，故fast每走一次都要判断是否指向null
+                break;
+            }
+            slow = slow.next;
+            fast = fast.next;
+        }
+        return slow;
+    }
+
+    //返回链表中倒数第k个结点
+    //方法1（利用链表长度来决定结束条件,确定返回结点的位置）
+    private static Node lastKNode1(Node head,int k){
+        int len = getLength(head);
+        if(len < k){
+            return null;
+        }
+        int steps = len - k;
+        Node node = head;
+        for(int i = 0;i < steps;i++){
+            node = node.next;
+        }
+        return node;
+    }
+    //方法2（定义两个引用first和second，first比second快k个结点，当first== null时返回second）
+    private static Node lastKNode2(Node head,int k){
+        Node first = head;
+        Node second = head;
+        for(int i = 0;i < k;i++){
+            if(first == null){
+                return null;
+            }
+            first = first.next;
+        }
+        while(first != null){
+            second = second.next;
+            first = first.next;
+        }
+        return second;
+    }
+
+    //反转链表
+    private static Node reverseList(Node head){
+        Node result = null; //定义新链表
+        Node cur = head;  //遍历原来的链表,将遍历到的结点头插到新链表中
+        while(cur != null){
+            Node next = cur.next; //cur.next会被修改，故需要 next 来保存原来的cur.next
+            cur.next = result;
+            result = cur;
+            cur = next;
+        }
+        return result;  //返回新链表
+    }
+
+    //判断链表是否为回文链表，返回 boolean 值
+    private static boolean chkPalindrome(Node head){
+        Node mid = middleNode2(head); //将链表从中间截断的后半部分定义为新链表
+        Node list1 = reverseList(mid);
+        Node list2 = head;
+        while(list1 != null && list2 != null){
+            if(list1.val != list2.val){
+                return false;
+            }
+            list1 = list1.next;
+            list2 = list2.next;
+        }
+        return true;
+    }
+
+    //在已排序的链表中删除重复的结点
+    private static Node deleteDuplication(Node head){
+        if(head == null){
+            return null;
+        }
+        Node prev = null;
+        Node cur = head;
+        Node back = head.next;
+        while(back != null){
+            if(cur.val != back.val){
+                prev = cur;
+                cur = back;
+                back = back.next;
+            }else{
+                while(back != null && cur.val == back.val){
+                    back = back.next;
+                }
+                if(prev == null){
+                    head = back;
+                }else{
+                    prev.next = back;
+                }
+                cur = back;
+                if(back != null){
+                    back = back.next;
+                }
+            }
+        }
+        return head;
+    }
+
     public static void main(String[] args) {
 
     }
 }
+
+
