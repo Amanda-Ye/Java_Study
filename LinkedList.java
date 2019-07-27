@@ -166,6 +166,17 @@ public class LinkedList {
         Node last = result;   //指向新链表的尾部结点
         Node cur1 = l1;  //遍历链表l1
         Node cur2 = l2;  //遍历链表l2
+        //原来的链表可能有一个为空链表，或者两个都为空链表
+        if(cur1 == null && cur2 == null) {
+            return null;
+        }
+        if(cur1 == null){
+            return cur2;
+        }
+        if(cur2 == null){
+            return cur1;
+        }
+        //两个链表都不为空
         while (cur1 != null && cur2 != null) {  // && 条件
             if (cur1.val <= cur2.val) {
                 //尾插cur1
@@ -186,14 +197,14 @@ public class LinkedList {
                 last = cur2;  //last指向尾结点
                 cur2 = cur2.next;
             }
-         //若链表l2已遍历完，将链表l1中剩下的链到last后面
-         if(cur1 != null){
-             last.next = cur1;
-         }
-         //若链表l1已遍历完，将链表l2中剩下的链到last后面
-            if(cur2 != null) {
-                last.next = cur2;
-            }
+        }
+        //若链表l2已遍历完，将链表l1中剩下的链到last后面
+        if(cur1 != null){
+            last.next = cur1;
+        }
+        //若链表l1已遍历完，将链表l2中剩下的链到last后面
+        if(cur2 != null) {
+            last.next = cur2;
         }
         return result;  //返回新链表result
     }
@@ -413,6 +424,72 @@ public class LinkedList {
             }
         }
         return head;
+    }
+
+    //链表的拷贝
+    private static Node copy(Node head) {
+        Node result = null;
+        Node last = result;
+        Node cur = head;
+        while (cur != null) {
+            Node tmp = new Node(cur.val);
+            if (result == null) {
+                result = tmp;
+            } else {
+                last.next = tmp;
+            }
+            last = tmp;
+            cur = cur.next;
+        }
+        return result;
+    }
+
+    //输入两个链表，找到它们的第一个公共结点（链表的相交）
+    /*计算出两个链表的长度，以及两个链表的长度差 diff ，
+    定义两个引用，链表较长的先遍历diff个，然后同时遍历并作比较，
+    找到第一个相同的结点并返回*/
+    private static Node getIntersectionNode(Node head1,Node head2){
+        int length1 = getLength(head1);
+        int length2 = getLength(head2);
+        int diff = length1 - length2;
+        Node longer = head1;
+        Node shorter = head2;
+        if(length1 < length2){
+            longer = head2;
+            shorter = head1;
+            diff = length2 - length1;
+        }
+        for(int i = 0;i < diff;i++){
+            longer = longer.next;
+        }
+        while(longer != shorter){
+            longer = longer.next;
+            shorter = shorter.next;
+        }
+        return longer;
+    }
+
+    //判断是否为环形链表，并返回入环结点
+    public static Node detectCycle(Node head){
+        Node slow = head;
+        Node fast = head;
+        do{
+            if(fast == null){
+                return null; //如果fast遇到null表示没有环
+            }
+            fast = fast.next;
+            if(fast == null){
+                return null;
+            }
+            slow = slow.next;
+            fast = fast.next;
+        }while(slow != fast);
+        slow = head;
+        while(slow != fast){
+            slow = slow.next;
+            fast = fast.next;
+        }
+        return fast;
     }
 
     public static void main(String[] args) {
