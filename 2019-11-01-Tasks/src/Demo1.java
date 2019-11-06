@@ -1,4 +1,4 @@
-import java.util.*;
+﻿import java.util.*;
 
 public class Demo1 {
     //17.打印出九九乘法表
@@ -34,23 +34,17 @@ public class Demo1 {
     }
     //21.求出1000以内所有能被9整除的数之和，每行显示5个数
     public static void printNum(){
-        int i = 0;
-        int sum = 0;
-        //List<List<Integer>> lists = new ArrayList<>();
-        List<Integer> list = new ArrayList<>();
-        while(i < 1000){
+        int a=1;
+        for (int i = 0; i <= 1000 ; i++) {
             if(i % 9 == 0){
-                sum += i;
-                list.add(i);
-                /*if(list.size() == 5){
-                    lists.add(list);
-                    list.clear();
-                }*/
+                System.out.print(i+"\t\t");
+                if(a % 5 == 0){
+                    System.out.println();
+                }
+                a++;
             }
-            i++;
         }
-        System.out.println("1000以内所有能被9整除的数之和：" + sum);
-        System.out.println("1000以内所有能被9整除的数：" + list);
+        System.out.println();
     }
     //22.求出10的N次方的值，N为用户输入的
     public static void powerOfTen(){
@@ -67,14 +61,22 @@ public class Demo1 {
     }
     //23.循环打印出26个英文字母，并按照通用排列表排列（提示a是97，显示出来4行，每行显示6到7个）
     public static void printLetter(){
-        Map<Character,Character> map = new TreeMap<>();
-        char lower = 'a';
-        while(lower <= 'z'){
-            char upper = Character.toUpperCase(lower);
-            map.put(lower,upper);
-            lower++;
+        int t = 1;
+        for (int i = 97; i <= 97 + 'Z'- 'A';) {
+            if(i >= 97 + 14){
+                for(int j = 0;j < 6;j++,i++){
+                    char p = (char) i;
+                    System.out.print(p + "\t");
+                }
+                System.out.println();
+            }else{
+                for(int j = 0;j < 7;j++,i++){
+                    char p = (char) i;
+                    System.out.print(p + "\t");
+                }
+                System.out.println();
+            }
         }
-        System.out.println("英文字母表：" + map);
     }
     //24.使用for循环求出斐波那契数，循环次数用户界面输入，并打印该数列
     public static void fibonacci(){
